@@ -114,7 +114,7 @@ private:
       return ndt;
     } else if(reg_method == "GICP_OMP") {
       NODELET_INFO("GICP_OMP is selected");
-	  boost::shared_ptr<pclomp::GeneralizedIterativeClosestPoint<PointT, PointT>> gicp(new pclomp::GeneralizedIterativeClosestPoint<PointT, PointT>);
+	  pclomp::GeneralizedIterativeClosestPoint<PointT, PointT>::Ptr gicp(new pclomp::GeneralizedIterativeClosestPoint<PointT, PointT>);
 	  return gicp;
     } else if(reg_method.find("NDT_CUDA") != std::string::npos) {
       NODELET_INFO("NDT_CUDA is selected");
@@ -142,7 +142,7 @@ private:
       return ndt;
     } else if(reg_method == "GICP") {
       NODELET_INFO("GICP is selected");
-	  boost::shared_ptr<pcl::GeneralizedIterativeClosestPoint<PointT, PointT>> gicp(new pcl::GeneralizedIterativeClosestPoint<PointT, PointT>);
+	  pcl::GeneralizedIterativeClosestPoint<PointT, PointT>::Ptr gicp(new pcl::GeneralizedIterativeClosestPoint<PointT, PointT>);
 	  return gicp;
     }
 
