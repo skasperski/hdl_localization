@@ -24,6 +24,7 @@
 #include <pcl/registration/gicp.h>
 
 #include <pclomp/ndt_omp.h>
+#include <pclomp/gicp_omp.h>
 #include <fast_gicp/ndt/ndt_cuda.hpp>
 
 #include <hdl_localization/pose_estimator.hpp>
@@ -111,6 +112,10 @@ private:
         ndt->setNeighborhoodSearchMethod(pclomp::KDTREE);
       }
       return ndt;
+    } else if(reg_method == "GICP_OMP") {
+      NODELET_INFO("GICP_OMP is selected");
+	  boost::shared_ptr<pclomp::GeneralizedIterativeClosestPoint<PointT, PointT>> gicp(new pclomp::GeneralizedIterativeClosestPoint<PointT, PointT>);
+	  return gicp;
     } else if(reg_method.find("NDT_CUDA") != std::string::npos) {
       NODELET_INFO("NDT_CUDA is selected");
       boost::shared_ptr<fast_gicp::NDTCuda<PointT, PointT>> ndt(new fast_gicp::NDTCuda<PointT, PointT>);
