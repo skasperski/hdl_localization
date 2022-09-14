@@ -136,7 +136,6 @@ void PoseEstimator::predict_odom(const Eigen::Matrix4f& odom_delta) {
 pcl::PointCloud<PoseEstimator::PointT>::Ptr PoseEstimator::correct(const ros::Time& stamp, const pcl::PointCloud<PointT>::ConstPtr& cloud) {
   last_correction_stamp = stamp;
 
-  Eigen::Matrix4f no_guess = last_observation;
   Eigen::Matrix4f imu_guess;
   Eigen::Matrix4f odom_guess;
   Eigen::Matrix4f init_guess = Eigen::Matrix4f::Identity();
@@ -178,9 +177,12 @@ pcl::PointCloud<PoseEstimator::PointT>::Ptr PoseEstimator::correct(const ros::Ti
   registration->setInputSource(cloud);
   registration->align(*aligned, init_guess);
 
-  Eigen::Matrix4f trans = registration->getFinalTransformation();
-  Eigen::Vector3f p = trans.block<3, 1>(0, 3);
-  Eigen::Quaternionf q(trans.block<3, 3>(0, 0));
+  const Eigen::Matrix4f final_transform = registration->getFinalTransformation();
+  wo_pred_error = last_observation.inverse() * final_transform;
+  last_observation = final_transform;
+
+  Eigen::Vector3f p = final_transform.block<3, 1>(0, 3);
+  Eigen::Quaternionf q(final_transform.block<3, 3>(0, 0));
 
   if(quat().coeffs().dot(q.coeffs()) < 0.0f) {
     q.coeffs() *= -1.0f;
@@ -189,12 +191,9 @@ pcl::PointCloud<PoseEstimator::PointT>::Ptr PoseEstimator::correct(const ros::Ti
   Eigen::VectorXf observation(7);
   observation.middleRows(0, 3) = p;
   observation.middleRows(3, 4) = Eigen::Vector4f(q.w(), q.x(), q.y(), q.z());
-  last_observation = trans;
-
-  wo_pred_error = no_guess.inverse() * registration->getFinalTransformation();
 
   ukf->correct(observation);
-  imu_pred_error = imu_guess.inverse() * registration->getFinalTransformation();
+  imu_pred_error = imu_guess.inverse() * final_transform;
 
   if(odom_ukf) {
     if (observation.tail<4>().dot(odom_ukf->mean.tail<4>()) < 0.0) {
@@ -202,7 +201,7 @@ pcl::PointCloud<PoseEstimator::PointT>::Ptr PoseEstimator::correct(const ros::Ti
     }
 
     odom_ukf->correct(observation);
-    odom_pred_error = odom_guess.inverse() * registration->getFinalTransformation();
+    odom_pred_error = odom_guess.inverse() * final_transform;
   }
 
   return aligned;
