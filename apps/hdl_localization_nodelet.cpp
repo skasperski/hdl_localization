@@ -21,6 +21,7 @@
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 
 #include <pcl/filters/voxel_grid.h>
+#include <pcl/registration/gicp.h>
 
 #include <pclomp/ndt_omp.h>
 #include <fast_gicp/ndt/ndt_cuda.hpp>
@@ -134,6 +135,10 @@ private:
         NODELET_WARN("invalid search method was given");
       }
       return ndt;
+    } else if(reg_method == "GICP") {
+      NODELET_INFO("GICP is selected");
+	  boost::shared_ptr<pcl::GeneralizedIterativeClosestPoint<PointT, PointT>> gicp(new pcl::GeneralizedIterativeClosestPoint<PointT, PointT>);
+	  return gicp;
     }
 
     NODELET_ERROR_STREAM("unknown registration method:" << reg_method);
