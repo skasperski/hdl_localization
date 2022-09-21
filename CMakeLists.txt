@@ -26,10 +26,11 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   geometry_msgs
   message_generation
-  ndt_omp
   fast_gicp
   hdl_global_localization
 )
+
+find_package(PCLOMP 1.0 REQUIRED)
 
 find_package(PCL 1.7 REQUIRED)
 include_directories(${PCL_INCLUDE_DIRS})
@@ -80,6 +81,7 @@ add_library(hdl_localization_nodelet
 target_link_libraries(hdl_localization_nodelet
   ${catkin_LIBRARIES}
   ${PCL_LIBRARIES}
+  pclomp::registration
 )
 add_dependencies(hdl_localization_nodelet ${PROJECT_NAME}_gencpp)
 

@@ -21,7 +21,7 @@
   <build_depend>sensor_msgs</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>message_generation</build_depend>
-  <build_depend>ndt_omp</build_depend>
+  <build_depend>pclomp</build_depend>
   <build_depend>fast_gicp</build_depend>
   <build_depend>hdl_global_localization</build_depend>
 
@@ -37,7 +37,7 @@
   <run_depend>sensor_msgs</run_depend>
   <run_depend>geometry_msgs</run_depend>
   <run_depend>message_generation</run_depend>
-  <run_depend>ndt_omp</run_depend>
+  <run_depend>pclomp</run_depend>
   <run_depend>fast_gicp</run_depend>
   <run_depend>hdl_global_localization</run_depend>
 
